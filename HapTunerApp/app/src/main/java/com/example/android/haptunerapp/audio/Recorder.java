@@ -13,11 +13,11 @@ import android.os.Process;
 import android.util.Log;
 
 public class Recorder {
-    private int audioSource = MediaRecorder.AudioSource.DEFAULT;
-    private int channelConfig = AudioFormat.CHANNEL_IN_MONO;
-    private int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
-    private int sampleRate = 44100;
-    private Thread thread;
+    public int audioSource = MediaRecorder.AudioSource.DEFAULT;
+    public int channelConfig = AudioFormat.CHANNEL_IN_MONO;
+    public int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+    public int sampleRate = 44100;
+    public Thread thread;
     private Callback callback;
 
     public Recorder() {
@@ -39,6 +39,9 @@ public class Recorder {
                 Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);
 
                 int minBufferSize =  AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioEncoding);
+                System.out.println(minBufferSize);
+
+                //buffer size 3584
                 AudioRecord recorder = new AudioRecord(audioSource, sampleRate, channelConfig, audioEncoding, minBufferSize);
 
                 if (recorder.getState() == AudioRecord.STATE_UNINITIALIZED) {

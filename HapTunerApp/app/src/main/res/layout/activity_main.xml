@@ -86,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/diffMicTestButton"
-                android:text="Other Mic Test"
+                android:text="Tuner"
 
                 />
 

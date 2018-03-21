@@ -6,6 +6,6 @@ package com.example.android.haptunerapp.audio;
 
 public interface Callback {
 
-    void onBufferAvailable(byte[] buffer);
+    double[] onBufferAvailable(byte[] buffer);
 }
 

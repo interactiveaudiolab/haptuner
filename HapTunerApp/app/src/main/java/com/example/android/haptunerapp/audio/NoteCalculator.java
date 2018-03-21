@@ -16,6 +16,8 @@ public class NoteCalculator {
     private double freqArray[] = new double[88];
     private int ARefIndex = 48;
     private double AFreq = 440;
+    private double[] chromaBins = {0, 1/11, 2/11, 3/11, 4/11, 5/11, 6/11, 7/11, 8/11, 9/11, 10/11, 1};
+    private String[] chromaNoteNames = {"C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"};
 
     private String noteNameArray[] = new String[88];
     private String[] noteNames = new String[]
@@ -139,6 +141,35 @@ public class NoteCalculator {
         }
     }
 
+    public double retChroma(double freq){
+        double chroma= Math.log(freq)/Math.log(2) - Math.floor(Math.log(freq)/Math.log(2));
+        System.out.println(chroma);
+        return chroma;
+    }
+
+    public String retPitchClass(double chroma){
+        int i = 0;
+        while (chroma > chromaBins[i]){
+            i++;
+
+        }
+        if(tuneStatus == "sharp"){
+            if(i != 0){
+                return chromaNoteNames[i-1];
+            }
+            else{
+                return chromaNoteNames[11];
+            }
+
+        }
+        else{
+            return chromaNoteNames[i];
+        }
+
+
+
+    }
+
     public double retCentsOff(double frequen, double closeFreq){
         double centDiff = 1200 *(Math.log(frequen/closeFreq)/Math.log(2));
         if(tuneStatus == "sharp"){
@@ -150,8 +181,16 @@ public class NoteCalculator {
 
         return centDiff;
     }
-    public String retTuneStatus(){
-        return tuneStatus;
+    public String retTuneStatus(double f, double cf){
+        double centsOff = retCentsOff(f, cf);
+        if(Math.abs(centsOff) <= 5){
+            return "In Tune";
+        }else if(centsOff < 0){
+            return "Flat";
+        }
+        else{
+            return "Sharp";
+        }
     }
 
 
