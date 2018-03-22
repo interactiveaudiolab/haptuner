@@ -34,6 +34,7 @@
             android:id="@+id/TuneStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
 
             android:fontFamily="sans-serif-thin"
             android:text="@string/app_name"
@@ -52,7 +53,7 @@
             android:id="@+id/aveChroma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:visibility="gone"
             android:fontFamily="sans-serif-thin"
             android:text="@string/app_name"
             android:textColor="@android:color/black"
@@ -61,6 +62,7 @@
             android:id="@+id/ChromaClass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
 
             android:fontFamily="sans-serif-thin"
             android:text="@string/app_name"

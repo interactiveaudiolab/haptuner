@@ -1,8 +1,10 @@
 package com.example.android.haptunerapp;
 
 import android.media.AudioRecord;
+import android.media.MediaPlayer;
 import android.os.Process;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 //import android.app.Activity;
@@ -11,6 +13,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ import com.example.android.haptunerapp.audio.Callback;
 import com.example.android.haptunerapp.audio.NoteCalculator;
 import com.example.android.haptunerapp.audio.Recorder;
 import com.example.android.haptunerapp.audio.Yin;
+
 import com.example.android.haptunerapp.audio.NoteCalculator;
 //import com.example.android.haptunerapp.audio.HapticFeedback;
 
@@ -50,6 +54,10 @@ public class DifferentMicTest extends AppCompatActivity {
     private TextView CentsOff;
     private TextView ChromaVal;
     private TextView ChromaClass;
+    private MediaPlayer Flat;
+    private MediaPlayer Sharp;
+    private MediaPlayer inTune;
+
     Handler vibHandler;
     Runnable vibRunnable;
     // private HapticFeedback haptFeed;
@@ -87,14 +95,14 @@ public class DifferentMicTest extends AppCompatActivity {
             int[] nonBytesAudio = audioCalculator.getAmplitudes();
             double[] doublesAudio = intToDouble(nonBytesAudio);
             double yinFreq = yinPitchTracker.getPitchInHz( doublesAudio);
-            System.out.println("Yin Freq" + yinFreq);
+            //System.out.println("Yin Freq" + yinFreq);
             double frequency = audioCalculator.getFrequency();
             noteCalc = new NoteCalculator(frequency);
             buffInt++;
 
            // buffArray[buffInt%buffSize] = noteCalc.retCentsOff(frequency, noteCalc.retClosestFreq(noteCalc.retFreqIndex(frequency), frequency));
 
-           /* if(buffInt%buffSize == buffSize-1){
+            /*if(buffInt%buffSize == buffSize-1){
                 System.out.println("Should Be A vib call rn");
 
                 if(Math.abs(median(buffArray)) <= 5){
@@ -187,7 +195,7 @@ public class DifferentMicTest extends AppCompatActivity {
                     recorder.startRecording();
 
                     int buffNum = 0;
-                    int buffSize = 8;
+                    int buffSize = 16;
                     boolean arrayFull = false;
                     double[] buffFreqArray = new double[buffSize];
                     double[] buffFreqIndexArray = new double[buffSize];
@@ -201,16 +209,17 @@ public class DifferentMicTest extends AppCompatActivity {
                         double[] retArray = callback.onBufferAvailable(buffer);
                         buffNum++;
                         buffFreqArray[buffNum % buffSize] = retArray[0];
+                        System.out.println(retArray[0]);
                         buffFreqIndexArray[buffNum % buffSize] = retArray[1];
                         buffCentsArray[buffNum % buffSize] = retArray[2];
-                        buffChromaArray[buffNum % buffSize] = noteCalc.retChroma(retArray[0]);
-                        int[] nonBytesAudio = audioCalculator.getAmplitudes();
+                        //buffChromaArray[buffNum % buffSize] = noteCalc.retChroma(retArray[0]);
+                       /* int[] nonBytesAudio = audioCalculator.getAmplitudes();
                         double[] doublesAudio = intToDouble(nonBytesAudio);
-                        System.out.println(doublesAudio.length);
+                        //System.out.println(doublesAudio.length);
                         for(int i = 0; i <doublesAudio.length; i++) {
                             rawDataForYin[i * (buffNum % buffSize + 1)] = doublesAudio[i];
                         }
-
+*/
 
                         //unmodVib(median(buffCentsArray));
                         if (buffNum % buffSize == (buffSize - 1)) {
@@ -231,27 +240,60 @@ public class DifferentMicTest extends AppCompatActivity {
 
                             double aveFreq = median(buffFreqArray);
                             double aveIndex = median(buffFreqIndexArray);
-                            final double aveCents = median(buffCentsArray);
-                            double aveChroma = median(buffChromaArray);
+                            final double aveCents =  median(buffCentsArray);
+
+                            System.out.println(aveFreq);
+                            //
+                            //
+                            // double aveChroma = median(buffChromaArray);
                             //double yinFreq = yinPitchTracker.getPitchInHz(rawDataForYin);
                             //System.out.println(yinFreq);
                             if(buffNum%buffSize == buffSize-1){
+                                boolean s = false;
+                                boolean f = false;
+                                boolean tr = false;
                                 //System.out.println("Should Be A vib call rn");
-
-     /*                           if(Math.abs(aveCents) <= 5){
-                                    ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(650);
+                                System.out.println("Vib Call");
+                                if(Math.abs(aveCents) <= 5){
+                                    if (tr==false){
+                                        s = false;
+                                        f= false;
+                                        tr=true;
+                                        inTune.start();
+                                    }
+                                    //((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(650);
+                                    //inTune.start();
+                                    //inTune.stop();
                                 }
                                 if(aveCents> 0 && aveCents> 5){
+
+                                    if(s==false){
+                                        s=true;
+                                        f=false;
+                                        tr=false;
+                                        Sharp.start();
+
+                                    }
                                 //    ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(new long[] {550, 100}, 1);
-                                    ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(50);
+                                    //((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(100);
+                                    //Sharp.start();
+                                    //Sharp.stop();
                                 }
                                 if(aveCents < 0 && aveCents < -5){
-                                    //((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(new long[] {350, 300}, 1);
-                                    ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(200);
-                                }
-*/
-                            }
 
+                                    if(f==false){
+                                        s=false;
+                                        tr=false;
+                                        f=true;
+                                        Flat.start();
+
+                                    }
+                                    //((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(new long[] {350, 300}, 1);
+                                    //((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(300);
+                                    //Flat.start();
+                                    //Flat.stop();
+                                }
+                            }
                             /*//unmodVib(aveCents);
                             String avFrStr = Double.toString(aveFreq);
                             String avCeStr = Double.toString(aveCents);
@@ -266,10 +308,10 @@ public class DifferentMicTest extends AppCompatActivity {
                             //final String db = String.valueOf(decibel + " db");
                             final String hz = String.valueOf(aveFreq + " Hz");
                             final String cN = String.valueOf("Closest Note: " + noteCalc.retClosestNote((int) aveIndex));
-                            final String tS = String.valueOf("Tune Status: " + noteCalc.retTuneStatus(aveFreq, noteCalc.retClosestFreq((int) aveIndex, aveFreq)));
+                            //final String tS = String.valueOf("Tune Status: " + noteCalc.retTuneStatus(aveFreq, noteCalc.retClosestFreq((int) aveIndex, aveFreq)));
                             final String cO = String.valueOf("Cents Off: " + aveCents);
-                            final String cV = String.valueOf("Chroma Val" + aveChroma);
-                            final String cC = String.valueOf("Chroma Class" + noteCalc.retPitchClass(aveChroma));
+                            //final String cV = String.valueOf("Chroma Val" + aveChroma);
+                            //final String cC = String.valueOf("Chroma Class" + noteCalc.retPitchClass(aveChroma));
 
 
                             //String tuneStatus = noteCalc.retTuneStatus(aveFreq, noteCalc.retClosestFreq((int)aveIndex, aveFreq));
@@ -292,10 +334,10 @@ public class DifferentMicTest extends AppCompatActivity {
 
                                     CurrFreq.setText(hz);
                                     ClosestNote.setText(cN);
-                                    TuneStatus.setText(tS);
+                                    //TuneStatus.setText(tS);
                                     CentsOff.setText(cO);
-                                    ChromaVal.setText(cV);
-                                    ChromaClass.setText(cC);
+                                    //ChromaVal.setText(cV);
+                                    //ChromaClass.setText(cC);
 
                                 }
                             });
@@ -364,6 +406,11 @@ public class DifferentMicTest extends AppCompatActivity {
         ChromaVal = (TextView) findViewById(R.id.aveChroma);
         ChromaClass = (TextView) findViewById(R.id.ChromaClass);
 
+
+        Sharp = MediaPlayer.create(this, R.raw.sharp);
+        Flat = MediaPlayer.create(this, R.raw.flat);
+        inTune = MediaPlayer.create(this, R.raw.intune);
+
         //averageFrequency = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         aveFreqInd = 0;
 
@@ -382,8 +429,8 @@ public class DifferentMicTest extends AppCompatActivity {
                     ClosestNote.setVisibility(View.VISIBLE);
                     TuneStatus.setVisibility(View.VISIBLE);
                     CentsOff.setVisibility(View.VISIBLE);
-                    ChromaVal.setVisibility(View.VISIBLE);
-                    ChromaClass.setVisibility(View.VISIBLE);
+                    ChromaVal.setVisibility(View.INVISIBLE);
+                    ChromaClass.setVisibility(View.INVISIBLE);
 
 
                     onResume();
