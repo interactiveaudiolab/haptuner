@@ -58,6 +58,11 @@ public class DifferentMicTest extends AppCompatActivity {
     private MediaPlayer Sharp;
     private MediaPlayer inTune;
 
+
+    boolean s = false;
+    boolean f = false;
+    boolean tr = false;
+
     Handler vibHandler;
     Runnable vibRunnable;
     // private HapticFeedback haptFeed;
@@ -249,9 +254,7 @@ public class DifferentMicTest extends AppCompatActivity {
                             //double yinFreq = yinPitchTracker.getPitchInHz(rawDataForYin);
                             //System.out.println(yinFreq);
                             if(buffNum%buffSize == buffSize-1){
-                                boolean s = false;
-                                boolean f = false;
-                                boolean tr = false;
+
                                 //System.out.println("Should Be A vib call rn");
                                 System.out.println("Vib Call");
                                 if(Math.abs(aveCents) <= 5){
@@ -410,6 +413,9 @@ public class DifferentMicTest extends AppCompatActivity {
         Sharp = MediaPlayer.create(this, R.raw.sharp);
         Flat = MediaPlayer.create(this, R.raw.flat);
         inTune = MediaPlayer.create(this, R.raw.intune);
+
+
+
 
         //averageFrequency = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         aveFreqInd = 0;
